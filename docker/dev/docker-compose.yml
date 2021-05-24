@@ -1,0 +1,20 @@
+version: '2'
+services:
+  udacity:
+    image: registry.gitlab.com/dasnano/common/docker/python-dasgate-edge-ci:0.2.3
+    container_name: "udacity-dev"
+    volumes:
+      - $ROOTDIR:$ROOTDIR
+    environment:
+      TZ: Europe/Madrid
+      ROOTDIR: $ROOTDIR
+      ARTIFACTORY_URL: $ARTIFACTORY_URL
+      ARTIFACTORY_PIP_URL: $ARTIFACTORY_PIP_URL
+      ARTIFACTORY_USER: $ARTIFACTORY_USER
+      ARTIFACTORY_PASSWORD: $ARTIFACTORY_PASSWORD
+      ARTIFACTORY_DOCS_REPOSITORY: $ARTIFACTORY_DOCS_REPOSITORY
+      LC_ALL: "C.UTF-8"
+      LANG: "C.UTF-8"
+    working_dir: $ROOTDIR
+    tty: true
+    stdin_open: true

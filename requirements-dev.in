@@ -1,0 +1,25 @@
+-c requirements.txt
+
+astroid
+bandit
+black
+bump2version
+coverage
+cython
+gitdb==4.0.2
+gitpython==3.1.0
+ipython
+more-itertools==8.2.0
+pip-tools>=5.1.2
+pylint
+pytest>5
+pytest-html
+recommonmark
+rope
+safety
+sphinx==1.8.5
+sphinx-markdown-tables
+sphinxcontrib-websupport==1.2.0
+typed-ast
+twine
+zipp

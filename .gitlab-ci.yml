@@ -1,0 +1,70 @@
+# Default docker image. The following must be installed (at least): GNU make, git, python 2/3, pip, tox & jfrog CLI
+image: registry.gitlab.com/dasnano/common/docker/python-dasgate-edge-ci:0.2.3
+
+cache: &global_cache
+  key:
+    files:
+      - requirements.txt
+      - requirements-dev.txt
+  paths:
+    - .tox
+  policy: pull
+
+.test:
+  stage: test
+  script:
+    - make ci-test
+  artifacts:
+    paths:
+      - docs/_build/test-reports
+    when: always
+    expire_in: 1 week
+
+stages:
+  - prepare
+  - quality  
+  - test
+  - docs
+  - release
+
+prepare:
+  stage: prepare
+  cache:
+    <<: *global_cache
+    policy: pull-push
+  script:
+    - make ci-prepare
+
+py36-test:
+  extends: .test
+  script:
+    - make ci-test ENV_NAME=py36-test
+
+lint:
+  stage: quality
+  script:
+    - make ci-lint
+
+pages:
+  stage: docs
+  script:
+    - make ci-docs
+  after_script:
+    - mv docs/_build/sphinx/html/ public/
+  artifacts:
+    paths:
+      - public
+  only:
+    - master
+
+release:
+  stage: release
+  script:
+    - make ci-release-dev
+  only:
+    - /^v.*$/  
+  artifacts:
+    paths:
+      - dist
+    expire_in: 1 week
+
