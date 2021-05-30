@@ -47,10 +47,10 @@ def test_make_tree(input_dict, trie):
         (
             {
                 "b": {"a": {"n": {"$ban": 10, "d": {"$band": 5}}, "r": {"$bar": 14}}},
-                "c": {"a": {"n": {"$can": 32, "d": {"y": {"$candy": 7}}}}},
+                "c": {"a": {"n": {"$can": 32, "d": {"y": {"$candy": 7}}}}}
             },
             2263,
-            [("candy", 7), ("band", 5)],
+            [("candy", 7), ("band", 5)]
         )
     ],
 )
@@ -113,8 +113,7 @@ def test_sort_words(words, sorted_words):
     assert_lists_are_equal(sorted_words, sorted_output)
 
 
-def test_predict_numbers(trie, numbers):
-    @pytest.mark.parametrize(
+@pytest.mark.parametrize(
     ["trie", "numbers", "words"],
     [
         (
@@ -123,3 +122,14 @@ def test_predict_numbers(trie, numbers):
                 "c": {"a": {"n": {"$can": 32, "d": {"y": {"$candy": 7}}}}},
             },
             2263,
+            [
+                {"$band": 5},
+                {"y": {"$candy": 7}}
+            ]
+        )
+    ]
+    )
+def test_predict_numbers(trie, numbers, words):
+    subtries_output = l2.predict_numbers(trie, numbers)
+    print(subtries_output)
+    assert all(subtrie in words for subtrie in subtries_output)

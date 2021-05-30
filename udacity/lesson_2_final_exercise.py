@@ -16,7 +16,7 @@ keymap = {
 def parse_content(content):
     parsed = {}
     lines = content.split("\n")
-    parsed = {l.split(" ")[0]: int(l.split(" ")[1]) for l in lines}
+    parsed = {l.split()[0]: int(l.split()[1]) for l in lines}
     return parsed
 
 
@@ -28,8 +28,7 @@ def make_tree(words):
             if c not in subtree:
                 subtree[c] = {}
             subtree = subtree[c]
-            if level == len(k) - 1:
-                subtree["$" + k] = v
+        subtree["$" + k] = v
     return tree
 
 
@@ -44,13 +43,15 @@ def predict_numbers(trie, numbers):
     candidate_subtries = [trie]
     for number in str(numbers):
         match_found = False
+        new_subtries = []
         for k in keymap[number]:
             for i, subtrie in enumerate(candidate_subtries):
-                if k == subtrie:
-                    candidate_subtries.append(subtrie[k])
-                    candidate_subtries.pop(i)
+                if k in subtrie:
+                    new_subtries.append(subtrie[k])
                     match_found = True
-        if not match_found:
+        if match_found:
+            candidate_subtries = new_subtries
+        else:
             candidate_subtries.clear()
     return candidate_subtries
 
@@ -64,18 +65,6 @@ def extract_words(subtries):
     return set(words)
 
 
-# def words_generator(subtrie):
-#     words = []
-#     for k, v in subtrie.items():
-#         if isinstance(v, dict):
-#             yield list(words_generator(v))[0]
-#         elif isinstance(v, list):
-#             for g in k:
-#                 yield list(words_generator(v))[0]
-#         if k.startswith("$"):
-#             yield (k, v)  # yield words
-#
-#
 def words_generator(subtrie):
     words = []
     for k, v in subtrie.items():
@@ -87,25 +76,9 @@ def words_generator(subtrie):
                 for words in words_generator(v):
                     yield words
         if k.startswith("$"):
-            yield (k[1:], v)  # yield words
+            yield (k[1:], v)
 
 
-#
-
-#
-# def words_generator(subtrie):
-# words = []
-# for k, v in subtrie.items():
-# if isinstance(v, dict):
-# words.append(list(words_generator(v))[0])
-# elif isinstance(v, list):
-# for g in k:
-# words.append(list(words_generator(v))[0])
-# if k.startswith("$"):
-# words.append((k, v))  # yield words
-# return words
-#
-#
 def sort_words(words_s):
     words = list(words_s)
     sorted_words = []
