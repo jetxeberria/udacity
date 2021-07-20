@@ -11,7 +11,7 @@ representations display seconds, but NASA's data (and our datetimes!) don't
 provide that level of resolution, so the output format also will not.
 """
 import datetime
-
+from udacity.neo_project.errors import InvalidInputDataError
 
 def cd_to_datetime(calendar_date):
     """Convert a NASA-formatted calendar date/time description into a datetime.
@@ -42,3 +42,26 @@ def datetime_to_str(dt):
     :return: That datetime, as a human-readable string without seconds.
     """
     return datetime.datetime.strftime(dt, "%Y-%m-%d %H:%M")
+
+def do_bool(value):
+    assertion_values = ["1", "True", "true", "TRUE", "Yes", "yes", "YES", 1, True]
+    negation_values = ["0", "False", "false", "FALSE", "No", "no", "NO", 0, False]    
+    if value in assertion_values:
+        return True
+    elif value in negation_values:
+        return False
+    else:
+        raise InvalidInputDataError(f"Given argument '{value}' can't be interpreted as boolean")
+
+def do_float(value):
+    try:
+        return float(value) if value else float("nan")
+    except (ValueError,TypeError) as exc:
+        raise InvalidInputDataError(f"Given argument '{value}' can't be interpreted as float", exc)
+
+def do_datetime(value):
+    try:
+        return cd_to_datetime(value) if value else datetime.datetime()
+    except (ValueError,TypeError) as exc:
+        raise InvalidInputDataError(f"Given argument '{value}' can't be interpreted as float", exc)
+
