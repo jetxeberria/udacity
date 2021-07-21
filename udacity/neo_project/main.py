@@ -386,7 +386,7 @@ def main():
     """Run the main script."""
     parser, inspect_parser, query_parser = make_parser()
     args = parser.parse_args()
-
+    print(f"argsS: {args}")
     # Extract data from the data files into structured Python objects.
     database = NEODatabase(load_neos(args.neofile), load_approaches(args.cadfile))
 

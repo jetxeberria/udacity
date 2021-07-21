@@ -29,6 +29,7 @@ def invalid_neo():
 @pytest.fixture
 def valid_approach():
     args = {
+        "designation": "170903",
         "time": "1900-Jan-01 00:11",
         "distance": 0.0921795123769547,
         "velocity": 16.7523040362574
