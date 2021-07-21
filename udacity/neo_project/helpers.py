@@ -13,6 +13,7 @@ provide that level of resolution, so the output format also will not.
 import datetime
 import json
 import csv
+from re import match
 
 from udacity.neo_project.errors import InvalidInputDataError
 
@@ -31,6 +32,22 @@ def cd_to_datetime(calendar_date):
     """
     return datetime.datetime.strptime(calendar_date, "%Y-%b-%d %H:%M")
 
+def timestamp_to_datetime(timestamp):
+    # if match('^[0-9:\-]*$',timestamp):
+    fmt = ''
+    if len(timestamp) == 19:
+        fmt = "%Y-%m-%d %H:%M:%S"
+        return datetime.datetime.strptime(timestamp, fmt)
+    elif len(timestamp) == 16:
+        fmt = "%Y-%m-%d %H:%M"
+        return datetime.datetime.strptime(timestamp, fmt)
+    elif len(timestamp) == 11:
+        fmt = "%Y-%b-%d"
+    elif len(timestamp) == 10:
+        fmt = "%Y-%m-%d"
+    time = datetime.datetime.strptime(timestamp, fmt)
+    return time.date()
+
 
 def datetime_to_str(dt):
     """Convert a naive Python datetime into a human-readable string.
@@ -46,7 +63,7 @@ def datetime_to_str(dt):
     """
     return datetime.datetime.strftime(dt, "%Y-%m-%d %H:%M")
 
-def do_bool(value):
+def do_bool(value, allow_none=True):
     assertion_values = ["1", "True", "true", "TRUE", "Y", "y", "Yes", "yes", "YES", 1, True]
     negation_values = ["0", "False", "false", "FALSE", "N", "n", "No", "no", "NO", 0, False]    
     if value in assertion_values:
@@ -55,6 +72,8 @@ def do_bool(value):
         return False
     elif value == '':
         return False
+    elif allow_none and value is None:
+        return None
     else:
         raise InvalidInputDataError(f"Given argument '{value}' can't be interpreted as boolean")
 
@@ -66,9 +85,16 @@ def do_float(value):
 
 def do_datetime(value):
     try:
-        return cd_to_datetime(value) if value else datetime.datetime()
+        if value:
+            if type(value) in [datetime.datetime, datetime.date]:
+                return value
+            return cd_to_datetime(value)
+        return None
     except (ValueError,TypeError) as exc:
-        raise InvalidInputDataError(f"Given argument '{value}' can't be interpreted as float", exc)
+        try:
+            return timestamp_to_datetime(value)
+        except (ValueError,TypeError) as exc:
+            raise InvalidInputDataError(f"Given argument '{value}' can't be interpreted as datetime", exc)
 
 def read_json(filename):
     with open(filename, "r") as f:

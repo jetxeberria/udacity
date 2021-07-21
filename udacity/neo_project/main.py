@@ -218,8 +218,8 @@ def query(database, args):
     # Construct a collection of filters from arguments supplied at the command line.
     filters = create_filters(
         date=args.date, start_date=args.start_date, end_date=args.end_date,
-        distance_min=args.distance_min, distance_max=arg.distance_max,
-        velocity_min=args.velocity_min, velocity_max=sargs.velocity_max,
+        distance_min=args.distance_min, distance_max=args.distance_max,
+        velocity_min=args.velocity_min, velocity_max=args.velocity_max,
         diameter_min=args.diameter_min, diameter_max=args.diameter_max,
         hazardous=args.hazardous
     )

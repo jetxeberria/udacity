@@ -7,6 +7,7 @@ from udacity.neo_project import main
 from udacity.neo_project.models import NearEarthObject, CloseApproach
 from udacity.neo_project.database import NEODatabase
 from udacity.neo_project.extract import load_approaches, load_neos
+from udacity.neo_project.filters import create_filters
 
 PROJECT_PATH = dirname(dirname(dirname(__file__)))
 PROJECT_HELPERS = Path(PROJECT_PATH, "tests", "helpers", "neo_project")
@@ -39,13 +40,15 @@ def real_neos_db():
 def test_db_g_matchable_data_w_build_t_all_approach_linked(neos, approaches):
     db = NEODatabase(neos, approaches)
     assert all(a.neo for a in db._approaches)
-
+    
+@pytest.mark.skip(reason="Using real data (big)")
 def test_db_g_matchable_data_w_build_t_all_approach_linked(neos, approaches):
     neos = load_neos(REAL_NEO_FILE)
     approaches = load_approaches(REAL_CAD_FILE)
     db = NEODatabase(neos, approaches)
     assert all(a.neo for a in db._approaches)
 
+@pytest.mark.skip(reason="Using real data (big)")
 def test_searching_g_neos_w_search_by_name_t_found(real_neos_db):
     name = "Halley"
     neo = real_neos_db.get_neo_by_name(name)
@@ -55,3 +58,12 @@ def test_searching_g_neos_w_search_by_designation_t_found(neos_db):
     designation = "7088"
     neo = neos_db.get_neo_by_designation(designation)
     assert neo.designation == designation
+
+def test_query_g_approaches_w_empty_query_t_nothing_found(neos_db):
+    approaches = neos_db.query()
+    assert not list(approaches)
+
+def test_query_g_approaches_w_query_t_found(neos_db):
+    filters = create_filters(hazardous=False)
+    approaches = neos_db.query(filters)
+    assert len(list(approaches)) == 3

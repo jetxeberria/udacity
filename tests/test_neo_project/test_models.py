@@ -45,9 +45,10 @@ def invalid_approach():
         "velocity": "hiperfast"
     }
     return args
+
 def test_neo_creation_g_valid_attributes_w_create_t_all_attributes(valid_neo):
     neo = NearEarthObject(**valid_neo)
-    assert neo.fullname == valid_neo["name"]
+    assert neo.fullname == f"{valid_neo['designation']} ({valid_neo['name']})"
 
 def test_neo_creation_g_invalid_attributes_w_create_t_type_error(invalid_neo):
     with pytest.raises(InvalidInputDataError):
@@ -72,3 +73,12 @@ def test_approach_creation_g_invalid_time_w_create_t_type_error(valid_approach, 
     invalid_approach_time["time"] = time
     with pytest.raises(InvalidInputDataError):
         approach = CloseApproach(**invalid_approach_time)
+
+@pytest.mark.parametrize(
+    "time", ["1900-Jan-01", "1900-01-01", "1900-01-01 00:11"]
+)
+def test_approach_creation_g_valid_time_w_create_t_type_error(valid_approach, time):
+    valid = {**valid_approach}
+    valid["time"] = time
+    approach = CloseApproach(**valid)
+
