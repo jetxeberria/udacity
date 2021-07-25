@@ -2,53 +2,21 @@
 import pytest
 from os.path import dirname, join
 from pathlib import Path
-from udacity import neo_project
 
-from udacity.neo_project import main
-from udacity.neo_project.models import NearEarthObject, CloseApproach
 from udacity.neo_project.database import NEODatabase
 from udacity.neo_project.extract import load_approaches, load_neos
 from udacity.neo_project.filters import create_filters, limit
+from tests.helpers.neo_project.helpers import neos, neos_db, approach_170903, approaches
 
 PROJECT_PATH = dirname(dirname(dirname(__file__)))
-PROJECT_HELPERS = Path(PROJECT_PATH, "tests", "helpers", "neo_project")
-TEST_NEO_FILE = join(PROJECT_HELPERS, 'neos_reduced.csv')
-TEST_CAD_FILE = join(PROJECT_HELPERS,'cad_reduced.json')
+# PROJECT_HELPERS = Path(PROJECT_PATH, "tests", "helpers", "neo_project")
+# TEST_NEO_FILE = join(PROJECT_HELPERS, 'neos_reduced.csv')
+# TEST_CAD_FILE = join(PROJECT_HELPERS,'cad_reduced.json')
 NEO_PROJECT = Path(PROJECT_PATH, "udacity", "neo_project", "data")
 REAL_NEO_FILE = join(NEO_PROJECT, 'neos.csv')
 REAL_CAD_FILE = join(NEO_PROJECT,'cad.json')
 
-@pytest.fixture
-def neos():
-    neos = load_neos(TEST_NEO_FILE)
-    return neos
 
-@pytest.fixture
-def approaches():
-    approaches = load_approaches(TEST_CAD_FILE)
-    return approaches
-
-@pytest.fixture
-def neo_170903():
-    return NearEarthObject(
-        "170903", 
-        None, 
-        None, 
-        True)
-
-@pytest.fixture
-def approach_170903(neo_170903):
-    approach = CloseApproach(
-        "170903", 
-        "1900-Jan-01 00:11", 
-        "0.0921795123769547", 
-        "16.7523040362574")
-    approach.neo = neo_170903
-    return approach
-
-@pytest.fixture
-def neos_db(neos, approaches):
-    return NEODatabase(neos, approaches)
 
 @pytest.fixture
 def real_neos_db():
@@ -62,7 +30,7 @@ def assert_equal_approaches(approach_1, approach_2):
     assert approach_1.distance == approach_2.distance
     assert approach_1.velocity == approach_2.velocity
 
-def test_filter_g_no_filters_w_filtered_t_get_all(neos_db, approach_170903):
+def test_filter_g_no_filters_w_filtered_t_get_all(neos_db):
     filters = create_filters()
     filtered_approaches = neos_db._approaches
     for f in filters:
@@ -90,7 +58,7 @@ def test_filter_exact_short_date_g_approach_in_data_w_filtered_t_found(neos_db, 
     
 
 
-def test_filter_exact_date_g_approach_not_in_data_w_filtered_t_none(neos_db, approach_170903):
+def test_filter_exact_date_g_approach_not_in_data_w_filtered_t_none(neos_db):
     filters = create_filters(date="2000-Jan-01 00:11")
     filtered_approaches = neos_db._approaches
     for f in filters:
@@ -98,7 +66,7 @@ def test_filter_exact_date_g_approach_not_in_data_w_filtered_t_none(neos_db, app
     assert not list(filtered_approaches)
 
 
-def test_filter_start_date_g_approach_in_data_w_filtered_t_found(neos_db, approach_170903):
+def test_filter_start_date_g_approach_in_data_w_filtered_t_found(neos_db):
     filters = create_filters(start_date="1900-Jan-01 03:13")
     filtered_approaches = neos_db._approaches
     for f in filters:
@@ -106,7 +74,7 @@ def test_filter_start_date_g_approach_in_data_w_filtered_t_found(neos_db, approa
     approaches = list(filtered_approaches)
     assert len(approaches) == 3
 
-def test_filter_end_date_g_approach_in_data_w_filtered_t_found(neos_db, approach_170903):
+def test_filter_end_date_g_approach_in_data_w_filtered_t_found(neos_db):
     filters = create_filters(end_date="1900-Jan-01 03:13")
     filtered_approaches = neos_db._approaches
     for f in filters:
@@ -114,7 +82,24 @@ def test_filter_end_date_g_approach_in_data_w_filtered_t_found(neos_db, approach
     approaches = list(filtered_approaches)
     assert len(approaches) == 3
 
-def test_filter_date_range_g_approach_in_data_w_filtered_t_found(neos_db, approach_170903):
+def test_filter_far_start_date_g_approach_in_data_w_filtered_t_not_found(neos_db):
+    filters = create_filters(start_date="2500-Jan-01 03:13")
+    filtered_approaches = neos_db._approaches
+    for f in filters:
+        filtered_approaches = filter(f, filtered_approaches)
+    approaches = list(filtered_approaches)
+    assert len(approaches) == 0
+
+
+def test_filter_early_end_date_g_approach_in_data_w_filtered_t_not_found(neos_db):
+    filters = create_filters(end_date="1000-Jan-01 03:13")
+    filtered_approaches = neos_db._approaches
+    for f in filters:
+        filtered_approaches = filter(f, filtered_approaches)
+    approaches = list(filtered_approaches)
+    assert len(approaches) == 0
+
+def test_filter_date_range_g_approach_in_data_w_filtered_t_found(neos_db):
     filters = create_filters(start_date="1900-Jan-01 03:13", end_date="1900-Jan-01 05:01")
     filtered_approaches = neos_db._approaches
     for f in filters:
@@ -122,8 +107,8 @@ def test_filter_date_range_g_approach_in_data_w_filtered_t_found(neos_db, approa
     approaches = list(filtered_approaches)
     assert len(approaches) == 2
 
-def test_filter_max_distance_g_approach_in_data_w_filtered_t_found(neos_db, approach_170903):
-    filters = create_filters(distance_max="0.388708125934362")
+def test_filter_max_distance_g_approach_in_data_w_filtered_t_found(neos_db):
+    filters = create_filters(distance_max="0.39")
     filtered_approaches = neos_db._approaches
     for f in filters:
         filtered_approaches = filter(f, filtered_approaches)

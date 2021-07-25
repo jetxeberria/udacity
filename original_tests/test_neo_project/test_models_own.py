@@ -3,6 +3,8 @@ import pytest
 
 from udacity.neo_project.models import NearEarthObject, CloseApproach
 from udacity.neo_project.helpers import InvalidInputDataError
+from tests.helpers.neo_project.helpers import fake_neo, fake_approaches, other_neo
+
 
 @pytest.fixture
 def valid_neo():
@@ -82,3 +84,24 @@ def test_approach_creation_g_valid_time_w_create_t_type_error(valid_approach, ti
     valid["time"] = time
     approach = CloseApproach(**valid)
 
+
+def test_serialization_g_neo_w_serialize_t_relevant_dictionary(fake_neo):
+    expected = {
+        "designation": "1", 
+        "name": None, 
+        "diameter_km": 100.0, 
+        "potentially_hazardous": True,
+        "approaches": []}
+    serialized = fake_neo.serialize()
+    assert serialized.items() == expected.items()
+
+
+def test_serialization_g_approach_w_serialize_t_relevant_dictionary(fake_approaches, fake_neo):
+    expected = {
+        '_designation': 'fake1',
+        'datetime_utc': "1900-Jan-01 00:11", 
+        'distance_au': 1.0, 
+        'velocity_km_s': 1.0,
+        'neo': fake_neo}
+    serialized = list(fake_approaches)[0].serialize()
+    assert serialized.items() == expected.items()
