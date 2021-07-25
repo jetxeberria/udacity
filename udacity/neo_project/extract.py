@@ -1,48 +1,53 @@
-"""Extract data on near-Earth objects and close approaches from CSV and JSON files.
+"""Extract data on near-Earth objects and close approaches from CSV and JSON
+files.
 
 The `load_neos` function extracts NEO data from a CSV file, formatted as
-described in the project instructions, into a collection of `NearEarthObject`s.
+described in the project instructions, into a collection of
+`NearEarthObject`s.
 
 The `load_approaches` function extracts close approach data from a JSON file,
 formatted as described in the project instructions, into a collection of
 `CloseApproach` objects.
 
-The main module calls these functions with the arguments provided at the command
-line, and uses the resulting collections to build an `NEODatabase`.
+The main module calls these functions with the arguments provided at the
+command line, and uses the resulting collections to build an `NEODatabase`.
 
 You'll edit this file in Task 2.
 """
+
+
 import csv
 import json
 from typing import Union, List
 from pathlib import Path
 
-from udacity.neo_project.models import NearEarthObject, CloseApproach
-from udacity.neo_project.helpers import read_csv, read_json
+from models import NearEarthObject, CloseApproach
+from helpers import read_csv, read_json
 
-def load_neos(neo_csv_path: Union[Path, str]) -> List[NearEarthObject]:  
+
+def load_neos(neo_csv_path: Union[Path, str]) -> List[NearEarthObject]:
     """Read near-Earth object information from a CSV file.
 
-    :param neo_csv_path: A path to a CSV file containing data about near-Earth objects.
+    :param neo_csv_path: A path to a CSV file containing data about
+    near-Earth objects, well in Path-like or string format.
     :return: A collection of `NearEarthObject`s.
     """
-    # TODO: Load NEO data from the given CSV file.
     neos = []
     neos_raw = read_csv(neo_csv_path, header=True)
     for neo in neos_raw:
         neos.append(NearEarthObject(
             neo["pdes"], neo["name"], neo["diameter"], neo["pha"]))
-        
+
     return neos
 
 
 def load_approaches(cad_json_path: Union[Path, str]) -> List[CloseApproach]:
     """Read close approach data from a JSON file.
 
-    :param neo_csv_path: A path to a JSON file containing data about close approaches.
+    :param neo_csv_path: A path to a JSON file containing data about close
+    approaches, well in Path-like or string format.
     :return: A collection of `CloseApproach`es.
     """
-    # TODO: Load close approach data from the given JSON file.
     approaches = []
     approaches_raw = read_json(cad_json_path)
     fields = approaches_raw["fields"]
@@ -52,9 +57,9 @@ def load_approaches(cad_json_path: Union[Path, str]) -> List[CloseApproach]:
     vel_index = fields.index("v_rel")
     for approach in approaches_raw["data"]:
         approaches.append(CloseApproach(
-            approach[des_index], 
-            approach[time_index], 
-            approach[dist_index], 
+            approach[des_index],
+            approach[time_index],
+            approach[dist_index],
             approach[vel_index]))
 
     return approaches
