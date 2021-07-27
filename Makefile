@@ -137,6 +137,16 @@ security-report: ## check source code for vulnerabilities and generate an HTML r
 check-dependencies: ## check dependencies for vulnerabilities using safety
 	safety check --full-report
 
+check-type-annotations-pep484:
+    mypy .
+
+check-docstrings-pep257:
+    pydocstyle .
+
+check-code-style-pep8:
+	pycodestyle .
+
+
 ### FORMAT & DOCS
 
 fmt: ## format code using the PEP8 convention
