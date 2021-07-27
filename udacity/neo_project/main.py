@@ -282,6 +282,7 @@ class NEOShell(cmd.Cmd):
     inspect and query commands, while only loading the data (which can be
     quite slow) once.
     """
+
     intro = ("Explore close approaches of near-Earth objects. "
              "Type `help` or `?` to list commands and `exit` to exit.\n")
     prompt = '(neo) '
@@ -311,8 +312,7 @@ class NEOShell(cmd.Cmd):
 
     @classmethod
     def parse_arg_with(cls, arg, parser):
-        """Parse the additional text passed to a command, using a given
-        parser.
+        """Parse the additional text passed to a command, using a parser.
 
         If any error is encountered (in lexical parsing or argument parsing),
         print the error to stderr and return None.

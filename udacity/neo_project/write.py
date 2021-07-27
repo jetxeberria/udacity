@@ -45,6 +45,7 @@ def write_to_csv(results, filename):
 
 
 def build_output(result):
+    """Return a selection of fields of an approach and its neo."""
     approach = result.serialize()
     neo = approach["neo"].serialize()
     del approach["_designation"]

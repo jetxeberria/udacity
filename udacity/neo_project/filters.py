@@ -1,5 +1,4 @@
-"""Provide filters for querying close approaches and limit the generated
-results.
+"""Provide filters for querying close approaches and limit the results.
 
 The `create_filters` function produces a collection of objects that is used by
 the `query` method to generate a stream of `CloseApproach` objects that match
@@ -45,8 +44,7 @@ class AttributeFilter:
     """
 
     def __init__(self, op, value):
-        """Construct a new `AttributeFilter` from an binary predicate and a
-        reference value.
+        """Construct a new `AttributeFilter` from predicate and reference.
 
         The reference value will be supplied as the second (right-hand side)
         argument to the operator function. For example, an `AttributeFilter`
@@ -77,21 +75,21 @@ class AttributeFilter:
         raise UnsupportedCriterionError
 
     def __repr__(self):
+        """Return a computer-readable string representation of this object."""
         class_name = self.__class__.__name__
         op_name = self.op.__name__
         return f"{class_name}(op=operator.{op_name}, value={self.value})"
 
 
 class DateFilter(AttributeFilter):
-    """ Filter focused in comparing dates """
+    """Filter approach based on date range or exact date."""
 
     def __init__(self, op, value):
-        """Construct a new `DateFilter` from an binary predicate and a
-        reference date.
+        """Construct a new `DateFilter` given predicate and reference.
 
         :param op: A 2-argument predicate comparator (such as `operator.le`).
         :param value: The reference value to compare against.
-       """
+        """
         value = do_datetime(value)
         super().__init__(op, value)
 
@@ -111,14 +109,14 @@ class DateFilter(AttributeFilter):
 
 
 class HazardousFilter(AttributeFilter):
+    """Filter approach based on whether its NEO is potentially hazardous."""
 
     def __init__(self, op, value):
-        """Construct a new `HazarousFilter` from an binary predicate and a
-        reference bool.
+        """Construct a new `HazarousFilter` given predicate and reference.
 
         :param op: A 2-argument predicate comparator (such as `operator.le`).
         :param value: The reference value to compare against.
-       """
+        """
         value = do_bool(value, allow_none=True)
         super().__init__(op, value)
 
@@ -134,10 +132,10 @@ class HazardousFilter(AttributeFilter):
 
 
 class FloatFilter(AttributeFilter):
+    """Base filter class for filters using float values."""
 
     def __init__(self, op, value):
-        """Construct a new `FloatFilter` from an binary predicate and a
-        reference float.
+        """Construct a new `FloatFilter` given predicate and reference.
 
         :param op: A 2-argument predicate comparator (such as `operator.le`).
         :param value: The reference value to compare against.
@@ -147,6 +145,7 @@ class FloatFilter(AttributeFilter):
 
 
 class DiameterFilter(FloatFilter):
+    """Filter approach based on diameter of its NEO."""
 
     def get(cls, approach):
         """
@@ -160,6 +159,7 @@ class DiameterFilter(FloatFilter):
 
 
 class DistanceFilter(FloatFilter):
+    """Filter approach based on distance to Earth."""
 
     def get(cls, approach):
         """
@@ -173,6 +173,7 @@ class DistanceFilter(FloatFilter):
 
 
 class VelocityFilter(FloatFilter):
+    """Filter approach based on velocity."""
 
     def get(cls, approach):
         """
@@ -270,7 +271,6 @@ def limit(iterator, n=None):
     :param n: The maximum number of values to produce.
     :yield: The first (at most) `n` values from the iterator.
     """
-
     if n:
         return itertools.islice(iterator, 0, n)
     else:

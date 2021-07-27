@@ -79,15 +79,20 @@ class NearEarthObject:
         return msg + hazardous_msg
 
     def __repr__(self):
-        """Return `repr(self)`, a computer-readable string representation
-        of this object."""
+        """Return `repr(self)`.
+        
+        Return a computer-readable string representation of this object.
+        """
         return (f"NearEarthObject(designation={self.designation!r}, "
                 f"name={self.name!r}, diameter={self.diameter:.3f}, "
                 f"hazardous={self.hazardous!r})")
 
     def serialize(self):
-        """Return a dictionary with the object attributes being their names
-        the keys"""
+        """Return object attributes as a dictionary.
+        
+        Return a dictionary with the object attributes being their names
+        the keys
+        """
         serialized = {k: v for k, v in self.__dict__.items()}
         serialized["name"] = serialized["name"] if serialized["name"] else ''
         serialized["potentially_hazardous"] = serialized["hazardous"]
@@ -134,8 +139,7 @@ class CloseApproach:
 
     @property
     def time_str(self):
-        """Return a formatted representation of this `CloseApproach`'s
-        approach time.
+        """Return a formatted representation of the approach time.
 
         The value in `self.time` should be a Python `datetime` object. While a
         `datetime` object has a string representation, the default
@@ -163,15 +167,20 @@ class CloseApproach:
         return msg + hazardous_msg + approach_msg + velocity_msg
 
     def __repr__(self):
-        """Return `repr(self)`, a computer-readable string representation of
-        this object."""
+        """Return `repr(self)`.
+        
+        Return a computer-readable string representation of this object.
+        """
         return (f"CloseApproach(time={self.time_str!r}, "
                 f"distance={self.distance:.2f}, "
                 f"velocity={self.velocity:.2f}, neo={self.neo!r})")
 
     def serialize(self):
-        """Return a dictionary with the object attributes being their names
-        the keys"""
+        """Return object attributes as a dictionary.
+        
+        Return a dictionary with the object attributes being their names
+        the keys
+        """
         serialized = {k: v for k, v in self.__dict__.items()}
         serialized["datetime_utc"] = serialized["time"].strftime(
             "%Y-%m-%d %H:%M")
