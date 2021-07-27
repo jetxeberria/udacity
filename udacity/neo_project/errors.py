@@ -1,5 +1,6 @@
 """Define custom errors to be used in project."""
 
+
 class InvalidInputDataError(Exception):
     """Provided input data has invalid type or format."""
 

@@ -80,7 +80,7 @@ class NearEarthObject:
 
     def __repr__(self):
         """Return `repr(self)`.
-        
+
         Return a computer-readable string representation of this object.
         """
         return (f"NearEarthObject(designation={self.designation!r}, "
@@ -89,7 +89,7 @@ class NearEarthObject:
 
     def serialize(self):
         """Return object attributes as a dictionary.
-        
+
         Return a dictionary with the object attributes being their names
         the keys
         """
@@ -168,7 +168,7 @@ class CloseApproach:
 
     def __repr__(self):
         """Return `repr(self)`.
-        
+
         Return a computer-readable string representation of this object.
         """
         return (f"CloseApproach(time={self.time_str!r}, "
@@ -177,7 +177,7 @@ class CloseApproach:
 
     def serialize(self):
         """Return object attributes as a dictionary.
-        
+
         Return a dictionary with the object attributes being their names
         the keys
         """
