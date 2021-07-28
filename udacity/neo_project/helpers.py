@@ -14,13 +14,13 @@ import datetime
 import json
 import csv
 from re import match
+from typing import List
 
 from errors import InvalidInputDataError
 
 
 def cd_to_datetime(calendar_date):
-    """Convert a NASA-formatted calendar date/time description into a
-    datetime.
+    """Convert a NASA-formatted date/time description into a datetime.
 
     NASA's format, at least in the `cd` field of close approach data, uses the
     English locale's month names. For example, December 31st, 2020 at noon is:
@@ -38,6 +38,7 @@ def cd_to_datetime(calendar_date):
 
 
 def timestamp_to_datetime(timestamp):
+    """Build datetime object based on the strings length."""
     fmt = ''
     if len(timestamp) == 19:
         fmt = "%Y-%m-%d %H:%M:%S"
@@ -69,6 +70,7 @@ def datetime_to_str(dt):
 
 
 def do_bool(value, allow_none=True):
+    """Cast input value to a boolean. Raise error if can't cast."""
     assertion_values = [
         "1", "True", "true", "TRUE", "Y", "y", "Yes", "yes", "YES", 1, True]
     negation_values = [
@@ -87,6 +89,7 @@ def do_bool(value, allow_none=True):
 
 
 def do_float(value):
+    """Cast input value to a float. Raise error if can't cast."""
     try:
         return float(value) if value else float("nan")
     except (ValueError, TypeError) as exc:
@@ -95,8 +98,9 @@ def do_float(value):
 
 
 def do_datetime(value):
+    """Cast input value to a DateTime. Raise error if can't cast."""
     try:
-        if value:
+        if value is not None:
             if type(value) in [datetime.datetime, datetime.date]:
                 return value
             return cd_to_datetime(value)
@@ -110,13 +114,15 @@ def do_datetime(value):
                 exc)
 
 
-def read_json(filename):
+def read_json(filename: str) -> dict:
+    """Read JSON file in a dictionary."""
     with open(filename, "r") as f:
         contents = json.load(f)
     return contents
 
 
-def read_csv(filename, header=False):
+def read_csv(filename: str, header: bool = False) -> List[str]:
+    """Read CSV file in a list of lines."""
     with open(filename, 'r') as f:
         contents = []
         if header:
